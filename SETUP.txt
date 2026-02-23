@@ -1,0 +1,331 @@
+================================================================
+  FABLESCRIPT — HYTALE MOD SETUP GUIDE
+  Step-by-step environment setup from scratch
+================================================================
+
+
+WHAT YOU NEED BEFORE STARTING
+------------------------------
+  - A computer running Windows, Mac, or Linux
+  - Internet connection
+  - About 30 minutes
+
+
+================================================================
+STEP 1 — INSTALL JAVA
+================================================================
+
+FableScript requires Java 21 or higher (Java 25 is ideal for
+full Hytale compatibility but 21 works for development).
+
+  Windows / Mac:
+    1. Go to: https://adoptium.net
+    2. Download "Temurin 21 (LTS)"
+    3. Run the installer, click through defaults
+    4. Open a terminal and verify:
+         java -version
+       You should see something like: openjdk version "21.x.x"
+
+  Linux (Ubuntu/Debian):
+    Run in terminal:
+      sudo apt update
+      sudo apt install openjdk-21-jdk
+      java -version
+
+
+================================================================
+STEP 2 — INSTALL GIT
+================================================================
+
+  Windows:
+    1. Go to: https://git-scm.com/download/win
+    2. Download and install (all defaults are fine)
+
+  Mac:
+    Run in terminal:
+      xcode-select --install
+
+  Linux:
+    sudo apt install git
+
+  Verify it worked:
+    git --version
+    (Should print: git version 2.x.x)
+
+
+================================================================
+STEP 3 — INSTALL MAVEN
+================================================================
+
+Maven builds your plugin into a .jar file.
+
+  Windows:
+    1. Go to: https://maven.apache.org/download.cgi
+    2. Download the "Binary zip archive" (apache-maven-3.x.x-bin.zip)
+    3. Extract it to C:\Program Files\Maven
+    4. Add C:\Program Files\Maven\bin to your PATH environment variable
+       (Search "environment variables" in Windows settings)
+
+  Mac:
+    brew install maven
+    (Install Homebrew first from https://brew.sh if needed)
+
+  Linux:
+    sudo apt install maven
+
+  Verify it worked:
+    mvn -version
+    (Should print: Apache Maven 3.x.x)
+
+
+================================================================
+STEP 4 — INSTALL AN IDE (RECOMMENDED)
+================================================================
+
+IntelliJ IDEA Community Edition is free and works great.
+
+  1. Go to: https://www.jetbrains.com/idea/download
+  2. Download "Community" edition (free)
+  3. Install and open it
+
+
+================================================================
+STEP 5 — GET THE PROJECT FILES
+================================================================
+
+You have two options:
+
+  OPTION A — Copy from this machine
+  ----------------------------------
+  The project already exists at:
+    /home/user/hytale-fable/
+
+  Copy the entire hytale-fable folder to your computer.
+
+  OPTION B — Clone from GitHub (if you upload it)
+  -------------------------------------------------
+  Once you push the project to GitHub, anyone can run:
+    git clone https://github.com/YOUR_NAME/hytale-fable.git
+    cd hytale-fable
+
+
+================================================================
+STEP 6 — OPEN THE PROJECT IN YOUR IDE
+================================================================
+
+  IntelliJ IDEA:
+    1. Open IntelliJ IDEA
+    2. Click "Open"
+    3. Navigate to the hytale-fable folder
+    4. Select it and click OK
+    5. IntelliJ will detect the pom.xml and ask to import as Maven
+    6. Click "Trust Project" when prompted
+
+  Wait for IntelliJ to finish indexing (progress bar at the bottom).
+
+
+================================================================
+STEP 7 — CONFIGURE JAVA IN INTELLIJ
+================================================================
+
+  1. Go to: File > Project Structure (Ctrl+Alt+Shift+S)
+  2. Under "Project", set SDK to Java 21 (or higher)
+  3. If Java 21 is not listed, click "Add SDK" > "Download JDK"
+     and select version 21
+  4. Click OK
+
+
+================================================================
+STEP 8 — SET UP THE HYTALE MAVEN REPOSITORY
+================================================================
+
+The pom.xml is already configured, but Maven needs to be able
+to reach the Hytale repository to download the server API.
+
+  The repository URL is already in pom.xml:
+    https://maven.hytale.com/release
+
+  Maven will download dependencies automatically on first build.
+  If it cannot reach that URL, see the TROUBLESHOOTING section.
+
+
+================================================================
+STEP 9 — BUILD THE PLUGIN
+================================================================
+
+  In your terminal, navigate to the project folder:
+    cd /path/to/hytale-fable
+
+  Run the build command:
+    mvn clean package -DskipTests
+
+  If successful, you will see:
+    BUILD SUCCESS
+
+  Your plugin JAR file will be at:
+    target/fablescript-1.0.0.jar
+
+
+================================================================
+STEP 10 — ADD DIALOGUE FILES
+================================================================
+
+The plugin needs dialogue YAML files for each NPC.
+Create the dialogues folder and add one file per NPC:
+
+  Folder location on your Hytale server:
+    plugins/FableScript/dialogues/
+
+  Files needed (copy and rename from sample-dialogue-tree.yml):
+    merchant_thomas.yml
+    guard_captain.yml
+    village_elder.yml
+    rogue_shade.yml
+
+  The sample file at:
+    src/main/resources/sample-dialogue-tree.yml
+  shows you exactly how to structure each file.
+
+
+================================================================
+STEP 11 — DEPLOY TO A HYTALE SERVER
+================================================================
+
+  1. Copy your built JAR to the server:
+       target/fablescript-1.0.0.jar
+       → YourHytaleServer/plugins/fablescript-1.0.0.jar
+
+  2. Start or restart the Hytale server
+
+  3. On first startup, FableScript creates:
+       plugins/FableScript/config.yml     (main settings)
+       plugins/FableScript/npcs.yml       (NPC definitions)
+       plugins/FableScript/fablescript.db (player database)
+       plugins/FableScript/logs/          (log files)
+
+  4. Verify it loaded by checking server logs for:
+       [FableScript/INFO] FableScript initialised successfully.
+
+
+================================================================
+STEP 12 — TEST IN GAME
+================================================================
+
+  Join the server and run these commands to verify everything works:
+
+    /morality
+      Should show your alignment bar (starts at Neutral)
+
+    /quest status
+      Should show the 5 built-in quests
+
+    /fable world-state
+      Should show zone scores (all 0 to start)
+
+  Admin commands (run these to test the backend):
+
+    /fable debug
+      Toggles verbose logging
+
+    /fable set-alignment <your-uuid> 50
+      Sets your alignment to +50 (GOOD tier) for testing
+
+    /fable reload
+      Reloads config without restarting the server
+
+
+================================================================
+STEP 13 — MAKE YOUR FIRST EDIT
+================================================================
+
+  To add a new quest:
+
+    1. Open FablePlugin.java in your IDE
+       Location: src/main/java/com/hytale/fablescript/FablePlugin.java
+
+    2. Find the method: registerDefaultQuests()
+
+    3. Copy one of the existing quest blocks and change:
+         - The quest ID ("quest_my_quest")
+         - The title and description
+         - The choice IDs and alignment deltas
+
+    4. Save the file
+
+    5. Rebuild:
+         mvn clean package -DskipTests
+
+    6. Copy the new JAR to the server and restart
+
+
+================================================================
+TROUBLESHOOTING
+================================================================
+
+  Problem: "BUILD FAILURE — cannot download com.hypixel.hytale:Server"
+  Fix:
+    The Hytale Maven repository may be temporarily unavailable.
+    Try again later or check https://maven.hytale.com for status.
+    You can still edit and develop code, just skip builds until
+    the repository is reachable.
+
+  Problem: "No JDK configured" in IntelliJ
+  Fix:
+    File > Project Structure > SDKs > + > Download JDK > Version 21
+
+  Problem: "Command not found: mvn"
+  Fix:
+    Maven is not on your PATH. On Windows, re-check Step 3.
+    On Mac/Linux, restart your terminal after installing.
+
+  Problem: Plugin loads but commands don't work
+  Fix:
+    Check plugins/FableScript/logs/fablescript-0.log for errors.
+    Run /fable debug to enable verbose logging.
+
+  Problem: Database errors on startup
+  Fix:
+    Delete plugins/FableScript/fablescript.db and restart.
+    The database is recreated automatically on startup.
+
+  Problem: Dialogue trees not loading
+  Fix:
+    Make sure your .yml files are in the dialogues/ subfolder
+    and that the filename matches the dialogue-tree field in npcs.yml.
+
+
+================================================================
+FILE REFERENCE
+================================================================
+
+  Source code:     src/main/java/com/hytale/fablescript/
+  Config files:    src/main/resources/
+  Built plugin:    target/fablescript-1.0.0.jar
+  README:          README.md (full technical docs)
+  NPC template:    src/main/resources/npcs.yml
+  Quest guide:     src/main/resources/sample-quest-definition.yml
+  Dialogue guide:  src/main/resources/sample-dialogue-tree.yml
+
+
+================================================================
+QUICK COMMAND REFERENCE
+================================================================
+
+  Build:           mvn clean package -DskipTests
+  Clean build:     mvn clean package
+  Run tests:       mvn test
+  Check deps:      mvn dependency:tree
+
+  In game:
+    /morality              Show your alignment
+    /morality history      Last 10 alignment changes
+    /quest status          Show available quests
+    /quest info <id>       Show quest details
+    /quest choose <id> <choice>   Complete a quest choice
+    /fable reload          Reload config files
+    /fable debug           Toggle verbose logging
+
+
+================================================================
+  You are now set up. Good luck with your mod!
+================================================================

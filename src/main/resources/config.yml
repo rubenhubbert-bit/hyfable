@@ -1,0 +1,74 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# FableScript Configuration — config.yml
+# Modify values below; use /fable reload to apply without restarting.
+# ══════════════════════════════════════════════════════════════════════════════
+
+fable:
+  enabled: true
+  debug: false   # Set to true for verbose debug output (performance impact)
+
+  # ── Alignment ──────────────────────────────────────────────────────────────
+  alignment:
+    # How many alignment points are removed per in-game day if the player is inactive.
+    # The sign is preserved (e.g., +40 → +39.9 → ... → 0 over time).
+    decay-per-day: 0.1
+
+    # Maximum alignment change a single action can cause.
+    # Prevents spam exploits. Actual quest/dialogue deltas are clamped to this.
+    max-change-per-action: 25
+
+    # Minimum alignment required to unlock GOOD abilities (holy_shield, heal, etc.)
+    good-ability-threshold: 20
+
+    # Maximum (most negative) alignment allowed to unlock EVIL abilities (life_drain, etc.)
+    evil-ability-threshold: -20
+
+  # ── Consequences ───────────────────────────────────────────────────────────
+  consequences:
+    # Master switch for world corruption and blessing effects.
+    environmental-enabled: true
+
+    # Block radius in which corruption/blessing can spread from the player's zone.
+    corruption-spread-radius: 50
+
+    # Probability (0.0–1.0) of corruption spreading to an adjacent zone each check.
+    corruption-spread-chance: 0.3
+
+    # Hours after a player leaves a zone before environmental effects start decaying.
+    corruption-persistence-hours: 24
+
+  # ── NPC System ─────────────────────────────────────────────────────────────
+  npcs:
+    # Whether NPCs use alignment-specific dialogue variants.
+    dialogue-variation-enabled: true
+
+    # Whether NPCs remember and are affected by the player's past interactions.
+    relationship-memory-enabled: true
+
+    # Whether NPC AI changes patrol/flee behaviour based on player alignment.
+    dynamic-behavior-enabled: true
+
+    # Block radius within which NPCs detect and react to player alignment changes.
+    reaction-radius: 100
+
+  # ── Quest System ───────────────────────────────────────────────────────────
+  quests:
+    # Allow quests to be completed via different moral paths (good/neutral/evil).
+    multiple-solutions-enabled: true
+
+    # Restrict quest availability based on player alignment.
+    # Disable during testing to make all quests accessible.
+    alignment-based-quest-availability: true
+
+  # ── Storage ────────────────────────────────────────────────────────────────
+  storage:
+    # Backend type: "sqlite" (recommended) or "json" (fallback, slower)
+    type: sqlite
+
+    # Auto-save dirty player profiles every N minutes.
+    backup-interval-minutes: 30
+
+  # ── World Reactivity ───────────────────────────────────────────────────────
+  world-reactivity:
+    # Master switch for dynamic weather, zone scoring, and environmental effects.
+    enabled: true
