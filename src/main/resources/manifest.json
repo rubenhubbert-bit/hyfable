@@ -1,9 +1,0 @@
-{
-  "group": "com.hytale",
-  "name": "FableScript",
-  "main": "com.hytale.fablescript.FablePlugin",
-  "version": "1.0.0",
-  "description": "Fable Morality and Consequence System for Hytale servers",
-  "authors": ["your-name"],
-  "website": "https://github.com/your-org/hytale-fablescript"
-}
